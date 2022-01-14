@@ -34,6 +34,5 @@ public class DetailActivity extends AppCompatActivity {
             Glide.with(this).load(urlImg)
                     .into(imageView);
         }
-
     }
 }

@@ -1,6 +1,9 @@
 package com.example.retrofitdemo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +14,7 @@ import android.os.Bundle;
 
 import com.example.retrofitdemo.Model.MovieApiResponse;
 import com.example.retrofitdemo.Model.Result;
+import com.example.retrofitdemo.Model.RetrofitViewModel;
 import com.example.retrofitdemo.service.ApiService;
 import com.example.retrofitdemo.service.GsonConverter;
 
@@ -25,11 +29,13 @@ public class MainActivity extends AppCompatActivity {
 
     private AdapterRetro adapterRetro;
     private RecyclerView recyclerView;
+    private RetrofitViewModel viewModel;
     private List<Result> list = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(RetrofitViewModel.class);
         recyclerView = findViewById(R.id.recyclerViewMain);
 
         getPopularMovies();
@@ -53,12 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 MovieApiResponse movieApiResponse = response.body();
                if(movieApiResponse != null && movieApiResponse.getResults() != null){
                    list = movieApiResponse.getResults();
-                   if(list != null){
-                       adapterRetro.setList(list);
-                       adapterRetro.notifyDataSetChanged();
-                   }
-
-               }
+                }
             }
 
             @Override
@@ -66,5 +67,19 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void getData(){
+        if(list != null){
+            LiveData<List<Result>> getListLive = viewModel.getListResult();
+            getListLive.observe(this, new Observer<List<Result>>() {
+                @Override
+                public void onChanged(List<Result> results) {
+                    adapterRetro.setList(results);
+                    adapterRetro.notifyDataSetChanged();
+                }
+            });
+
+        }
     }
 }

@@ -2,11 +2,16 @@ package com.example.retrofitdemo.Model;
 
 import android.os.Parcelable;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+@Entity(tableName = "retrofit")
 public class Result implements Parcelable {
 
     public final static Creator<Result> CREATOR = new Creator<Result>() {
@@ -33,6 +38,7 @@ public class Result implements Parcelable {
     @SerializedName("genre_ids")
     @Expose
     private List<Integer> genreIds = null;
+    @PrimaryKey
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -66,7 +72,7 @@ public class Result implements Parcelable {
     @SerializedName("vote_count")
     @Expose
     private Integer voteCount;
-
+    @Ignore
     protected Result(android.os.Parcel in) {
         this.adult = ((Boolean) in.readValue((Boolean.class.getClassLoader())));
         this.backdropPath = ((String) in.readValue((String.class.getClassLoader())));
@@ -83,8 +89,14 @@ public class Result implements Parcelable {
         this.voteAverage = ((Float) in.readValue((Float.class.getClassLoader())));
         this.voteCount = ((Integer) in.readValue((Integer.class.getClassLoader())));
     }
-
+    @Ignore
     public Result() {
+    }
+
+    public Result(String originalTitle, String overview, String posterPath) {
+        this.originalTitle = originalTitle;
+        this.overview = overview;
+        this.posterPath = posterPath;
     }
 
     public Boolean getAdult() {
